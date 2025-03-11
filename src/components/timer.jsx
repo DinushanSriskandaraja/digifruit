@@ -1,18 +1,27 @@
 import React, { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import './styles/timer.css';
-const CircularTimer = ({ timeLimit }) => {
+
+const CircularTimer = ({ timeLimit, onTimeEnd }) => {
   const [timeLeft, setTimeLeft] = useState(timeLimit);
   const radius = 50;
   const circumference = 2 * Math.PI * radius;
 
   useEffect(() => {
     const timer = setInterval(() => {
-      setTimeLeft((prev) => (prev > 0 ? prev - 1 : 0));
+      setTimeLeft((prev) => {
+        if (prev > 0) {
+          return prev - 1;
+        } else {
+          clearInterval(timer);
+          if (onTimeEnd) onTimeEnd(); // Trigger the onTimeEnd callback when time is up
+          return 0;
+        }
+      });
     }, 1000);
 
-    return () => clearInterval(timer);
-  }, []);
+    return () => clearInterval(timer); // Clean up the interval on unmount
+  }, [onTimeEnd]);
 
   const progress = (timeLeft / timeLimit) * circumference;
 

@@ -1,0 +1,150 @@
+/* Styles for Leaderboard.js */
+
+.leaderboard-container {
+  background-color: #2f3640;
+  color: #f5f6fa;
+  text-align: center;
+  padding: 30px;
+  border-radius: 12px;
+  width: 80%;
+  max-width: 600px;
+  margin: 40px auto;
+  box-shadow: 0px 6px 15px rgba(0, 0, 0, 0.3);
+  transition: 0.3s ease-in-out;
+}
+
+.leaderboard-container:hover {
+  transform: scale(1.02);
+}
+
+.leaderboard-title {
+  font-size: 2rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+.icon {
+  color: #fbc531;
+  font-size: 2.2rem;
+}
+
+.leaderboard-subtitle {
+  font-size: 1.2rem;
+  margin-bottom: 15px;
+  color: #dcdde1;
+  font-weight: 500;
+}
+
+.level-select {
+  width: 100%;
+  max-width: 250px;
+  padding: 10px;
+  font-size: 1rem;
+  border-radius: 8px;
+  border: none;
+  background-color: #353b48;
+  color: #f5f6fa;
+  font-weight: bold;
+  margin-bottom: 20px;
+  transition: 0.3s;
+  cursor: pointer;
+}
+
+.level-select:hover {
+  background-color: #fbc531;
+  color: #2f3640;
+}
+
+/* Leaderboard List */
+.leaderboard-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.leaderboard-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background-color: #353b48;
+  padding: 14px 22px;
+  border-radius: 10px;
+  font-size: 1.2rem;
+  font-weight: bold;
+  transition: 0.3s ease-in-out;
+  border: 2px solid transparent;
+}
+
+.leaderboard-item:hover {
+  background-color: #fbc531;
+  color: #2f3640;
+  transform: scale(1.05);
+  border-color: #e1b12c;
+}
+
+.rank-icon {
+  font-size: 1.8rem;
+  transition: 0.3s;
+}
+
+/* Player Details */
+.player-name {
+  flex: 1;
+  text-align: left;
+}
+
+.player-score {
+  color: #44bd32;
+  font-weight: bold;
+}
+
+/* Styling for top 3 ranks */
+.rank-1 .rank-icon {
+  color: #fbc531;
+}
+
+.rank-2 .rank-icon {
+  color: #e1b12c;
+}
+
+.rank-3 .rank-icon {
+  color: #4cd137;
+}
+
+.no-players {
+  font-size: 1.1rem;
+  color: #e84118;
+  margin-top: 10px;
+  font-weight: bold;
+}
+
+/* Responsive Design */
+@media (max-width: 600px) {
+  .leaderboard-container {
+      width: 90%;
+      padding: 20px;
+  }
+
+  .leaderboard-title {
+      font-size: 1.8rem;
+  }
+
+  .icon {
+      font-size: 1.8rem;
+  }
+
+  .leaderboard-item {
+      font-size: 1rem;
+      padding: 12px 18px;
+  }
+
+  .rank-icon {
+      font-size: 1.4rem;
+  }
+
+  .level-select {
+      width: 100%;
+  }
+}

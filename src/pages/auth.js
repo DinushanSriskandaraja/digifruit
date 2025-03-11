@@ -1,34 +1,64 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import './Styles/auth.css';
-const defaultUser = {
-  email: "user@example.com",
-  password: "password123"
-};
+import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import { getFirestore, doc, setDoc } from "firebase/firestore";
+import { app } from "../firebase"; // Ensure firebase.js exports `app`
+import "./Styles/auth.css";
+
+const auth = getAuth(app);
+const firestore = getFirestore(app);
 
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
+  const [name, setName] = useState(""); // State for full name
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
 
-  const handleAuth = (e) => {
+  const handleAuth = async (e) => {
     e.preventDefault();
     setError(null);
-    if (isLogin) {
-      if (email === defaultUser.email && password === defaultUser.password) {
-        navigate("/level");
+
+    try {
+      let userCredential;
+
+      if (isLogin) {
+        // User Login
+        userCredential = await signInWithEmailAndPassword(auth, email, password);
       } else {
-        setError("Invalid credentials");
+        // User Signup
+        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        const user = userCredential.user;
+
+        // Update user's display name
+        await updateProfile(user, { displayName: name });
+
+        // Store user data in Firestore
+        await setDoc(doc(firestore, "users", user.uid), {
+          uid: user.uid,
+          name: name,
+          email: email,
+          createdAt: new Date().toISOString()
+        });
       }
-    } else {
-      setError("Signup is not available. Use default credentials or play as guest.");
+
+      const user = userCredential.user;
+      const token = await user.getIdToken(); // Get user token
+
+      // Store user token in localStorage
+      localStorage.setItem("user", token);
+
+      // Redirect to level page
+      navigate("/level");
+    } catch (err) {
+      console.error("Firebase Auth Error:", err.code, err.message);
+      setError(err.message);
     }
   };
 
   const playAsGuest = () => {
-    navigate("/level");
+    navigate("/level"); // Skip login and play
   };
 
   return (
@@ -37,6 +67,16 @@ const Auth = () => {
         <h2 className="auth-title">{isLogin ? "Login" : "Sign Up"}</h2>
         {error && <p className="auth-error">{error}</p>}
         <form onSubmit={handleAuth}>
+          {!isLogin && (
+            <input
+              type="text"
+              placeholder="Full Name"
+              className="auth-input"
+              value={name}
+              onChange={(e) => setName(e.target.value)}
+              required
+            />
+          )}
           <input
             type="email"
             placeholder="Email"
@@ -69,7 +109,6 @@ const Auth = () => {
       </div>
     </div>
   );
-  
 };
 
 export default Auth;

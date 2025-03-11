@@ -1,6 +1,6 @@
 import { Link } from "react-router-dom";
 import { FaUser, FaTrophy } from "react-icons/fa";
-import './styles.css'
+import './styles/header.css'
 const Header = () => {
     return (
         <header className="header">

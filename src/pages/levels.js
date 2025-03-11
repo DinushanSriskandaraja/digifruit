@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import "./Styles/levels.css";
 
 function Levels() {
   const navigate = useNavigate();
@@ -11,13 +12,19 @@ function Levels() {
   };
 
   return (
-    <div>
-      <h1>Levels</h1>
-      <p>Select a level to start playing!</p>
-      <div>
-        <button onClick={() => handleLevelSelect(1)}>Level 1</button>
-        <button onClick={() => handleLevelSelect(2)}>Level 2</button>
-        <button onClick={() => handleLevelSelect(3)}>Level 3</button>
+    <div className="levels-container">
+      <h1 className="title">Choose Your Level</h1>
+      <p className="subtitle">Select a level to start playing!</p>
+      <div className="level-buttons">
+        <button className="level-button" onClick={() => handleLevelSelect(1)}>
+          Beginers
+        </button>
+        <button className="level-button" onClick={() => handleLevelSelect(2)}>
+          Intermediate
+        </button>
+        <button className="level-button" onClick={() => handleLevelSelect(3)}>
+          Advanced
+        </button>
       </div>
     </div>
   );
