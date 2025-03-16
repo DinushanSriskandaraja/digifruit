@@ -5,7 +5,7 @@ import Leaderboard from "./pages/leaderboard";
 import Auth from "./pages/auth";
 import Level from "./pages/levels";
 import Header from "./components/header";
-import Profile from "./components/profile";
+import Profile from "./pages/profile";
 import "./App.css";
 
 function App() {
