@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import {
   getAuth,
@@ -16,10 +16,46 @@ const firestore = getFirestore(app);
 const Auth = () => {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
-  const [name, setName] = useState(""); // State for full name
+  const [name, setName] = useState("");
   const [isLogin, setIsLogin] = useState(true);
   const [error, setError] = useState(null);
+  const [quote, setQuote] = useState("Loading quote...");
+  const [author, setAuthor] = useState("Fetching...");
   const navigate = useNavigate();
+
+  useEffect(() => {
+    const fetchQuote = async () => {
+      try {
+        const response = await fetch(
+          "https://api.allorigins.win/get?url=" +
+            encodeURIComponent(
+              "https://indian-quotes-api.vercel.app/api/quotes/random"
+            )
+        );
+
+        if (!response.ok) {
+          throw new Error(`HTTP error! Status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        const quoteData = JSON.parse(data.contents); // Data is in a string format
+        console.log(quoteData); // Check the structure of the response
+        // Ensure you're accessing the correct object structure
+        if (quoteData && quoteData.quote) {
+          setQuote(quoteData.quote); // Get the quote text
+          setAuthor(quoteData.author.name || "Unknown"); // Get the author
+        } else {
+          throw new Error("Quote data not found");
+        }
+      } catch (error) {
+        console.error("Error fetching quote:", error);
+        setQuote("Failed to fetch quote. Try again later.");
+        setAuthor(""); // Reset author in case of an error
+      }
+    };
+
+    fetchQuote();
+  }, []);
 
   const handleAuth = async (e) => {
     e.preventDefault();
@@ -29,14 +65,12 @@ const Auth = () => {
       let userCredential;
 
       if (isLogin) {
-        // User Login
         userCredential = await signInWithEmailAndPassword(
           auth,
           email,
           password
         );
       } else {
-        // User Signup
         userCredential = await createUserWithEmailAndPassword(
           auth,
           email,
@@ -44,10 +78,8 @@ const Auth = () => {
         );
         const user = userCredential.user;
 
-        // Update user's display name
         await updateProfile(user, { displayName: name });
 
-        // Store user data in Firestore
         await setDoc(doc(firestore, "users", user.uid), {
           uid: user.uid,
           name: name,
@@ -57,25 +89,26 @@ const Auth = () => {
       }
 
       const user = userCredential.user;
-      const token = await user.getIdToken(); // Get user token
-
-      // Store user token in localStorage
+      const token = await user.getIdToken();
       localStorage.setItem("authToken", token);
 
-      // Redirect to level page
       navigate("/level");
     } catch (err) {
       console.error("Firebase Auth Error:", err.code, err.message);
-      setError(err.message);
+      setError("Error: " + err.message);
     }
   };
 
   const playAsGuest = () => {
-    navigate("/level"); // Skip login and play
+    navigate("/level");
   };
 
   return (
     <div className="auth-container">
+      <div className="quote-container">
+        <p className="quote"> "{quote}" </p>{" "}
+        <p className="author"> -{author} </p>{" "}
+      </div>{" "}
       <div className="auth-box">
         <h2 className="auth-title"> {isLogin ? "Login" : "Sign Up"} </h2>{" "}
         {error && <p className="auth-error"> {error} </p>}{" "}
@@ -114,9 +147,7 @@ const Auth = () => {
         </form>{" "}
         <p className="auth-toggle">
           {" "}
-          {isLogin
-            ? "Don't have an account? "
-            : "Already have an account? "}{" "}
+          {isLogin ? "Don't have an account?" : "Already have an account?"}{" "}
           <button onClick={() => setIsLogin(!isLogin)}>
             {" "}
             {isLogin ? "Sign Up" : "Login"}{" "}
