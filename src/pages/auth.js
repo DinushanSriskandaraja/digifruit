@@ -1,6 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { getAuth, signInWithEmailAndPassword, createUserWithEmailAndPassword, updateProfile } from "firebase/auth";
+import {
+  getAuth,
+  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
+  updateProfile,
+} from "firebase/auth";
 import { getFirestore, doc, setDoc } from "firebase/firestore";
 import { app } from "../firebase"; // Ensure firebase.js exports `app`
 import "./Styles/auth.css";
@@ -25,10 +30,18 @@ const Auth = () => {
 
       if (isLogin) {
         // User Login
-        userCredential = await signInWithEmailAndPassword(auth, email, password);
+        userCredential = await signInWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
       } else {
         // User Signup
-        userCredential = await createUserWithEmailAndPassword(auth, email, password);
+        userCredential = await createUserWithEmailAndPassword(
+          auth,
+          email,
+          password
+        );
         const user = userCredential.user;
 
         // Update user's display name
@@ -39,7 +52,7 @@ const Auth = () => {
           uid: user.uid,
           name: name,
           email: email,
-          createdAt: new Date().toISOString()
+          createdAt: new Date().toISOString(),
         });
       }
 
@@ -47,7 +60,7 @@ const Auth = () => {
       const token = await user.getIdToken(); // Get user token
 
       // Store user token in localStorage
-      localStorage.setItem("user", token);
+      localStorage.setItem("authToken", token);
 
       // Redirect to level page
       navigate("/level");
@@ -64,9 +77,10 @@ const Auth = () => {
   return (
     <div className="auth-container">
       <div className="auth-box">
-        <h2 className="auth-title">{isLogin ? "Login" : "Sign Up"}</h2>
-        {error && <p className="auth-error">{error}</p>}
+        <h2 className="auth-title"> {isLogin ? "Login" : "Sign Up"} </h2>{" "}
+        {error && <p className="auth-error"> {error} </p>}{" "}
         <form onSubmit={handleAuth}>
+          {" "}
           {!isLogin && (
             <input
               type="text"
@@ -76,7 +90,7 @@ const Auth = () => {
               onChange={(e) => setName(e.target.value)}
               required
             />
-          )}
+          )}{" "}
           <input
             type="email"
             placeholder="Email"
@@ -94,19 +108,24 @@ const Auth = () => {
             required
           />
           <button type="submit" className="auth-button">
-            {isLogin ? "Login" : "Sign Up"}
-          </button>
-        </form>
+            {" "}
+            {isLogin ? "Login" : "Sign Up"}{" "}
+          </button>{" "}
+        </form>{" "}
         <p className="auth-toggle">
-          {isLogin ? "Don't have an account? " : "Already have an account? "}
+          {" "}
+          {isLogin
+            ? "Don't have an account? "
+            : "Already have an account? "}{" "}
           <button onClick={() => setIsLogin(!isLogin)}>
-            {isLogin ? "Sign Up" : "Login"}
-          </button>
-        </p>
+            {" "}
+            {isLogin ? "Sign Up" : "Login"}{" "}
+          </button>{" "}
+        </p>{" "}
         <button onClick={playAsGuest} className="auth-guest">
-          Play as Guest
-        </button>
-      </div>
+          Play as Guest{" "}
+        </button>{" "}
+      </div>{" "}
     </div>
   );
 };
